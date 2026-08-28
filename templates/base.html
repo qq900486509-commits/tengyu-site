@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ page.title }}</title>
+<meta name="description" content="{{ page.description }}">
+{%- if page.keywords %}
+<meta name="keywords" content="{{ page.keywords }}">
+{%- endif %}
+<meta name="author" content="{{ site.org }}">
+<meta name="robots" content="{% if page.noindex %}noindex, follow{% else %}index, follow, max-image-preview:large, max-snippet:-1{% endif %}">
+<link rel="canonical" href="{{ site.url }}{{ page.url }}">
+<link rel="icon" href="{{ site.favicon }}">
+
+<meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+<meta property="og:site_name" content="{{ site.name }}">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:url" content="{{ site.url }}{{ page.url }}">
+<meta property="og:title" content="{{ page.title }}">
+<meta property="og:description" content="{{ page.description }}">
+<meta property="og:image" content="{{ site.url }}{{ page.image or 'og-image.jpg' }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ page.title }}">
+<meta name="twitter:description" content="{{ page.description }}">
+<meta name="twitter:image" content="{{ site.url }}{{ page.image or 'og-image.jpg' }}">
+{%- if page.layout == 'post' %}
+<meta property="article:published_time" content="{{ page.date }}">
+<meta property="article:section" content="{{ page.category_name }}">
+{%- endif %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="{{ site.root }}style.css">
+<link rel="alternate" type="application/rss+xml" title="{{ site.name }} 文章" href="{{ site.url }}feed.xml">
+
+<script type="application/ld+json">
+{{ page.jsonld }}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">跳到主要內容</a>
+
+<nav class="nav">
+  <a class="nav-logo" href="{{ site.root }}" aria-label="{{ site.org }} 首頁">
+    <b>騰域整合行銷</b><span>TENGYU MARKETING</span>
+  </a>
+  <button class="nav-toggle" type="button" aria-label="開啟選單" aria-expanded="false" aria-controls="navlinks">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <div class="nav-links" id="navlinks">
+    {%- for item in site.nav %}
+    <a href="{{ site.root }}{{ item.href }}"{% if page.section == item.section %} aria-current="page"{% endif %}>{{ item.label }}</a>
+    {%- endfor %}
+    <a class="nav-cta" href="{{ site.root }}contact/">免費諮詢</a>
+  </div>
+</nav>
+
+{%- if page.crumbs %}
+<nav class="crumbs" aria-label="麵包屑">
+  <div class="wrap">
+    {%- for c in page.crumbs %}
+    {%- if not loop.last %}<a href="{{ site.root }}{{ c.href }}">{{ c.label }}</a><i>/</i>
+    {%- else %}<span aria-current="page">{{ c.label }}</span>{% endif %}
+    {%- endfor %}
+  </div>
+</nav>
+{%- endif %}
+
+<main id="main">
+{{ content }}
+</main>
+
+<footer class="footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <b>{{ site.org }}</b>
+      <p>用自己驗證過的方法，陪你把生意做大。<br>{{ site.address }}</p>
+      <div class="footer-social">
+        {%- for s in site.socials %}
+        <a href="{{ s.href }}" target="_blank" rel="noopener">{{ s.label }}</a>
+        {%- endfor %}
+      </div>
+    </div>
+    <div class="footer-cols">
+      <div class="footer-col">
+        <b>SERVICES</b>
+        <div>
+          <a href="{{ site.root }}services/meta-ads/">Meta 廣告代操</a>
+          <a href="{{ site.root }}services/google-ads/">Google 廣告代操</a>
+          <a href="{{ site.root }}services/creative/">廣告素材製作</a>
+          <a href="{{ site.root }}services/ai-workflow/">AI 導入與自動化</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <b>INDUSTRIES</b>
+        <div>
+          <a href="{{ site.root }}industries/ecommerce/">電商・零售</a>
+          <a href="{{ site.root }}industries/real-estate/">房地產・建案</a>
+          <a href="{{ site.root }}industries/medical/">醫療・診所</a>
+          <a href="{{ site.root }}industries/direct-sales/">直銷・保健</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <b>MORE</b>
+        <div>
+          <a href="{{ site.root }}cases/">實績案例</a>
+          <a href="{{ site.root }}pricing/">服務方案</a>
+          <a href="{{ site.root }}blog/">行銷文章</a>
+          <a href="{{ site.root }}about/">關於騰域</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <b>CONTACT</b>
+        <div>
+          <a href="mailto:{{ site.email }}">✉ {{ site.email }}</a>
+          <a href="{{ site.line }}" target="_blank" rel="noopener">💬 官方 LINE 諮詢</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© {{ site.year }} {{ site.org }}. All rights reserved.</span>
+    <span><a href="{{ site.root }}privacy/">隱私權政策</a></span>
+  </div>
+</footer>
+
+<a class="line-float" href="{{ site.line }}" target="_blank" rel="noopener" aria-label="加官方 LINE 聯繫客服">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 2C6.48 2 2 5.64 2 10.13c0 4.02 3.55 7.39 8.35 8.03.32.07.77.21.88.49.1.25.07.64.03.9l-.14.85c-.04.25-.2.99.87.54 1.07-.45 5.76-3.39 7.86-5.81C21.3 13.5 22 11.9 22 10.13 22 5.64 17.52 2 12 2Z"/></svg>
+  <span>LINE 諮詢</span>
+</a>
+
+<script>
+(function(){
+  var t=document.querySelector('.nav-toggle'),l=document.getElementById('navlinks');
+  if(t&&l){t.addEventListener('click',function(){
+    var open=l.classList.toggle('open');
+    t.setAttribute('aria-expanded',open?'true':'false');
+    t.setAttribute('aria-label',open?'關閉選單':'開啟選單');
+  });}
+  var f=document.getElementById('consultForm');
+  if(f){f.addEventListener('submit',function(e){
+    e.preventDefault();
+    var g=function(n){return f.elements[n]?f.elements[n].value.trim():'';};
+    var body=['姓名 / 稱呼：'+g('name'),'公司 / 品牌：'+g('company'),'聯絡方式：'+g('contact'),
+      '產業別：'+g('industry'),'每月廣告預算：'+g('budget'),'','想達成的目標：',g('goal')].join('\n');
+    window.location.href='mailto:{{ site.email }}?subject='
+      +encodeURIComponent('【網站諮詢】'+(g('company')||g('name')))
+      +'&body='+encodeURIComponent(body);
+  });}
+})();
+</script>
+</body>
+</html>

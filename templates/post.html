@@ -1,0 +1,44 @@
+<article>
+<header class="hero">
+  <div class="wrap-narrow">
+    <a class="post-cat" href="{{ site.root }}blog/{{ page.category }}/">{{ page.category_name }}</a>
+    <h1 style="margin-top:20px">{{ page.h1 }}</h1>
+    {%- if page.lead %}<p class="hero-lead">{{ page.lead }}</p>{% endif %}
+    <div class="post-meta">
+      <time datetime="{{ page.date }}">{{ page.date_display }}</time>
+      <span>約 {{ page.read_min }} 分鐘閱讀</span>
+      <span>{{ site.org }}</span>
+    </div>
+  </div>
+</header>
+
+<section class="section bg-cream">
+  <div class="wrap-narrow prose">
+    {{ content }}
+
+    {%- if page.related_links %}
+    <div class="related">
+      <h2>延伸閱讀</h2>
+      <div class="grid grid-3">
+        {%- for r in page.related_links %}
+        <a class="post-card" href="{{ site.root }}{{ r.href }}">
+          <span class="post-cat">{{ r.tag }}</span>
+          <h3>{{ r.title }}</h3>
+          <p>{{ r.desc }}</p>
+        </a>
+        {%- endfor %}
+      </div>
+    </div>
+    {%- endif %}
+
+    <div class="cta-band">
+      <h2>{{ page.cta_title or '想知道這套做法用在你身上會怎樣？' }}</h2>
+      <p>{{ page.cta_text or '填寫諮詢表單，告訴我們你的產業與目標，我們會在 24 小時內回覆，提供初步的廣告方向評估。' }}</p>
+      <div class="btns">
+        <a class="btn btn-primary" href="{{ site.root }}contact/">免費諮詢 →</a>
+        <a class="btn btn-ghost" href="{{ site.root }}cases/">看實績案例</a>
+      </div>
+    </div>
+  </div>
+</section>
+</article>

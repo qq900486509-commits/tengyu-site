@@ -1,0 +1,66 @@
+<header class="hero">
+  <div class="wrap">
+    {%- if page.eyebrow %}<span class="eyebrow">{{ page.eyebrow }}</span>{% endif %}
+    <h1>{{ page.h1 }}</h1>
+    <div class="rule"></div>
+    {%- if page.lead %}<p class="hero-lead">{{ page.lead }}</p>{% endif %}
+  </div>
+</header>
+
+{%- if page.stats %}
+<div class="ticker">
+  <div class="ticker-track">
+    {%- for pass in [1,2] %}
+    <div style="display:flex"{% if pass == 2 %} aria-hidden="true"{% endif %}>
+      {%- for s in page.stats %}
+      <span class="ticker-item"><b>{{ s.num }}</b><span>{{ s.label }}</span></span>
+      {%- endfor %}
+    </div>
+    {%- endfor %}
+  </div>
+</div>
+{%- endif %}
+
+<section class="section bg-cream">
+  <div class="wrap-narrow prose">
+    {{ content }}
+  </div>
+</section>
+
+{%- if page.faq %}
+<section class="section bg-cream-dark">
+  <div class="wrap-narrow">
+    <span class="eyebrow">FAQ · 常見問題</span>
+    <h2 style="margin-top:12px">{{ page.faq_title or '關於這項服務，你可能想問' }}</h2>
+    <div class="faq">
+      {%- for f in page.faq %}
+      <details{% if loop.first %} open{% endif %}>
+        <summary>{{ f.q }}</summary>
+        <div class="faq-body">{{ f.a_html }}</div>
+      </details>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+{%- endif %}
+
+{%- if page.related_links %}
+<section class="section bg-cream">
+  <div class="wrap">
+    <span class="eyebrow">RELATED · 延伸閱讀</span>
+    <h2 style="margin-top:12px">相關內容</h2>
+    <div class="grid grid-3" style="margin-top:28px">
+      {%- for r in page.related_links %}
+      <a class="card" href="{{ site.root }}{{ r.href }}">
+        {%- if r.tag %}<span class="card-tag">{{ r.tag }}</span>{% endif %}
+        <h3>{{ r.title }}</h3>
+        <p>{{ r.desc }}</p>
+        <span class="more">閱讀</span>
+      </a>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+{%- endif %}
+
+{% include 'cta.html' %}

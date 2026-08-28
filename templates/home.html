@@ -1,0 +1,178 @@
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="badge"><span></span><span>廣告代操 · AI 效率導入 · 固定月費</span></div>
+    <h1>你只管做生意，<br><span style="color:var(--gold)">Meta 與 Google 廣告</span>交給我們。</h1>
+    <div class="rule"></div>
+    <p class="hero-lead">廣告投放與素材製作，每月固定費用，不再被追加嚇到。就像規劃一趟旅行——路線我們安排好，你只要享受成長的風景。跨足電商、房地產、醫療、直銷等 <strong style="color:var(--navy)">8＋</strong> 產業。</p>
+    <div class="btns">
+      <a class="btn btn-primary" href="{{ site.root }}contact/">立即免費諮詢 →</a>
+      <a class="btn btn-ghost" href="{{ site.root }}cases/">查看實績案例</a>
+    </div>
+  </div>
+</header>
+
+<div class="ticker">
+  <div class="ticker-track">
+    {%- for pass in [1,2] %}
+    <div style="display:flex"{% if pass == 2 %} aria-hidden="true"{% endif %}>
+      {%- for s in site.ticker %}
+      <span class="ticker-item"><b>{{ s.num }}</b><span>{{ s.label }}</span></span>
+      {%- endfor %}
+    </div>
+    {%- endfor %}
+  </div>
+</div>
+
+<!-- 服務 -->
+<section class="section bg-cream" id="services">
+  <div class="wrap">
+    <span class="eyebrow">SERVICES · 服務項目</span>
+    <h2 style="margin-top:12px">從投放到素材，到把流程自動化</h2>
+    <div class="rule"></div>
+    <div class="grid grid-2" style="margin-top:36px">
+      {%- for s in site.services %}
+      <a class="card" href="{{ site.root }}{{ s.href }}">
+        <span class="card-tag">{{ s.tag }}</span>
+        <h3>{{ s.title }}</h3>
+        <p>{{ s.desc }}</p>
+        <span class="more">了解服務內容</span>
+      </a>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 案例 -->
+<section class="section bg-cream-dark" id="cases">
+  <div class="wrap">
+    <span class="eyebrow">SELECTED WORK · 實績案例</span>
+    <h2 style="margin-top:12px">數字不說謊，這些都是真實後台成果</h2>
+    <p style="max-width:52ch;margin-top:12px;color:var(--muted);font-size:15px">每一個案例都附上產業背景、挑戰與操盤邏輯——我們是顧問，不只是投手。</p>
+    <div class="grid grid-3" style="margin-top:36px">
+      {%- for c in site.featured_cases %}
+      <a class="card" href="{{ site.root }}{{ c.href }}">
+        <span class="card-tag">{{ c.industry }}</span>
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span class="stat-num">{{ c.metric }}</span>
+          <span class="stat-unit">{{ c.unit }}</span>
+        </div>
+        <p class="stat-label">{{ c.metricLabel }}</p>
+        <div style="height:1px;background:rgba(196,158,84,.4);margin:20px 0"></div>
+        <p>{{ c.story }}</p>
+        <span class="more">看完整拆解</span>
+      </a>
+      {%- endfor %}
+    </div>
+    <div class="btns" style="margin-top:32px">
+      <a class="btn btn-ghost" href="{{ site.root }}cases/">看全部 6 個案例</a>
+    </div>
+    <div style="margin-top:28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;padding:22px clamp(22px,3vw,36px);background:#fff;border:1px solid rgba(196,158,84,.4);border-radius:18px">
+      <span style="font-family:var(--latin);font-size:12px;letter-spacing:.12em;color:var(--navy);font-weight:700;white-space:nowrap">VERIFIED · 數據真實</span>
+      <span style="width:1px;height:32px;background:rgba(27,58,92,.2)"></span>
+      <p style="font-size:14px;line-height:1.85;color:var(--body);max-width:72ch">以上皆為真實廣告後台數據。基於對客戶的保密義務，我們不公開後台截圖；正式合作前的策略會議中，可提供去識別化的成效佐證供您參考。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 產業 -->
+<section class="section bg-cream" id="industries">
+  <div class="wrap">
+    <span class="eyebrow">INDUSTRIES · 產業經驗</span>
+    <h2 style="margin-top:12px">不同產業，廣告要用不同打法</h2>
+    <div class="rule"></div>
+    <div class="grid grid-4" style="margin-top:36px">
+      {%- for i in site.industries %}
+      <a class="card" href="{{ site.root }}{{ i.href }}">
+        <h3>{{ i.title }}</h3>
+        <p>{{ i.desc }}</p>
+        <span class="more">產業做法</span>
+      </a>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 方案 -->
+<section class="section bg-navy" id="plans">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:48px">
+      <span class="eyebrow">PRICING · 服務方案</span>
+      <h2 style="margin-top:12px">固定月費，不再被追加費用嚇到</h2>
+      <p style="margin-top:12px">方案費用固定，廣告費另計</p>
+    </div>
+    <div class="grid grid-3" style="align-items:stretch">
+      {%- for p in site.plans %}
+      <div class="plan{% if p.featured %} featured{% endif %}">
+        {%- if p.featured %}<span class="plan-flag">最多人選擇</span>{% endif %}
+        <h3>{{ p.name }}</h3>
+        <div class="plan-price"><em>NT$</em><b>{{ p.price }}</b><span>/ 月</span></div>
+        <span class="plan-quota">⚡ {{ p.quota }}</span>
+        <div class="plan-div"></div>
+        <ul class="plan-feat">
+          {%- for f in p.features %}<li>{{ f }}</li>{% endfor %}
+        </ul>
+        <a class="btn {% if p.featured %}btn-primary{% else %}btn-ghost{% endif %}" href="{{ site.root }}contact/">立即諮詢 →</a>
+      </div>
+      {%- endfor %}
+    </div>
+    <div class="btns" style="justify-content:center;margin-top:32px">
+      <a class="btn btn-gold" href="{{ site.root }}pricing/">看完整方案比較與費用說明</a>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE PROOF -->
+<section class="section" style="background:linear-gradient(150deg,#0F2540 0%,#1B3A5C 100%);color:#fff;text-align:center;position:relative;overflow:hidden">
+  <div style="position:absolute;top:-100px;right:-60px;width:360px;height:360px;background:radial-gradient(circle,rgba(196,158,84,.2),transparent 70%);border-radius:50%;pointer-events:none"></div>
+  <div class="wrap-narrow" style="position:relative">
+    <span style="display:inline-flex;align-items:center;gap:9px;font-family:var(--latin);font-size:12px;letter-spacing:.16em;font-weight:700;color:#fff"><span style="width:9px;height:9px;border-radius:50%;background:var(--gold);animation:livePulse 1.6s ease-in-out infinite"></span>LIVE PROOF</span>
+    <h2 style="margin-top:18px;color:#fff">你現在看到這個頁面，<br>就是我們廣告投放的成果</h2>
+    <p style="margin-top:20px;font-size:17px;line-height:2;color:#B8C4CC">我們不只幫客戶投廣告——我們自己就是第一個客戶。你找到我們的方式，就是我們用同一套方法操盤出來的。受眾設定、素材製作、優化邏輯，全部我們自己先跑一遍。</p>
+    <p style="margin-top:20px;font-weight:700;font-size:20px;color:var(--gold)">沒有親身驗證過的方法，我們不會拿來套用在你身上。</p>
+    <div class="btns" style="justify-content:center">
+      <a class="btn btn-gold" href="{{ site.root }}contact/">感受一下我們的廣告力 →</a>
+    </div>
+  </div>
+</section>
+
+<!-- 流程 -->
+<section class="section bg-cream">
+  <div class="wrap">
+    <div style="text-align:center;margin-bottom:44px">
+      <span class="eyebrow">PROCESS · 合作流程</span>
+      <h2 style="margin-top:12px">從諮詢到上線，一路陪你到底</h2>
+    </div>
+    <div class="grid grid-4">
+      {%- for s in site.steps %}
+      <div class="card">
+        <span style="font-family:var(--display);font-size:46px;color:var(--gold);line-height:1">{{ s.no }}</span>
+        <h3 style="margin-top:10px;font-size:19px">{{ s.title }}</h3>
+        <p>{{ s.desc }}</p>
+      </div>
+      {%- endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 最新文章 -->
+<section class="section bg-cream-dark">
+  <div class="wrap">
+    <span class="eyebrow">INSIGHTS · 行銷觀點</span>
+    <h2 style="margin-top:12px">最新文章</h2>
+    <div class="grid grid-3" style="margin-top:32px">
+      {%- for p in site.latest_posts %}
+      <a class="post-card" href="{{ site.root }}{{ p.href }}">
+        <span class="post-cat">{{ p.tag }}</span>
+        <h3>{{ p.title }}</h3>
+        <p>{{ p.desc }}</p>
+        <time datetime="{{ p.date }}">{{ p.date_display }}</time>
+      </a>
+      {%- endfor %}
+    </div>
+    <div class="btns" style="margin-top:32px">
+      <a class="btn btn-ghost" href="{{ site.root }}blog/">看所有文章</a>
+    </div>
+  </div>
+</section>
+
+{% include 'cta.html' %}

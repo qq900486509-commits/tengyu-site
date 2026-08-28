@@ -1,0 +1,55 @@
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">{{ page.eyebrow }}</span>
+    <h1>{{ page.h1 }}</h1>
+    <div class="rule"></div>
+    {%- if page.lead %}<p class="hero-lead">{{ page.lead }}</p>{% endif %}
+  </div>
+</header>
+
+{%- if page.intro_html %}
+<section class="section bg-cream" style="padding-bottom:0">
+  <div class="wrap-narrow prose">{{ page.intro_html }}</div>
+</section>
+{%- endif %}
+
+{%- if page.filters %}
+<section class="section bg-cream" style="padding-top:32px;padding-bottom:0">
+  <div class="wrap" style="display:flex;flex-wrap:wrap;gap:10px">
+    {%- for f in page.filters %}
+    <a class="post-cat" href="{{ site.root }}{{ f.href }}"
+       style="{% if f.active %}background:var(--navy);color:#fff;border-color:var(--navy){% endif %}">{{ f.label }}</a>
+    {%- endfor %}
+  </div>
+</section>
+{%- endif %}
+
+<section class="section bg-cream">
+  <div class="wrap">
+    {%- if page.entries %}
+    <div class="grid grid-3">
+      {%- for it in page.entries %}
+      <a class="post-card" href="{{ site.root }}{{ it.href }}">
+        <span class="post-cat">{{ it.tag }}</span>
+        <h3>{{ it.title }}</h3>
+        <p>{{ it.desc }}</p>
+        {%- if it.date_display %}<time datetime="{{ it.date }}">{{ it.date_display }}</time>{% endif %}
+      </a>
+      {%- endfor %}
+    </div>
+    {%- else %}
+    <p style="color:var(--muted)">這個分類還沒有文章，很快就會有。</p>
+    {%- endif %}
+
+    {%- if page.pages_total and page.pages_total > 1 %}
+    <nav class="pager" aria-label="分頁">
+      {%- for n in range(1, page.pages_total + 1) %}
+      {%- if n == page.page_num %}<span aria-current="page">{{ n }}</span>
+      {%- else %}<a href="{{ site.root }}{{ page.pager_base }}{% if n > 1 %}page/{{ n }}/{% endif %}">{{ n }}</a>{% endif %}
+      {%- endfor %}
+    </nav>
+    {%- endif %}
+  </div>
+</section>
+
+{% include 'cta.html' %}

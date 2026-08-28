@@ -1,0 +1,34 @@
+# Netlify 設定檔
+# 放在專案根目錄，Netlify 會自動讀取。
+
+[build]
+  # 安裝套件並建置網站
+  command = "pip install -r requirements.txt && python3 build.py"
+  # 產出的資料夾
+  publish = "dist"
+
+[build.environment]
+  PYTHON_VERSION = "3.12"
+  # 建置時的時區，讓排程文章用台灣時間判斷日期
+  TZ = "Asia/Taipei"
+
+# ── 快取設定 ────────────────────────────────
+# HTML 不快取，改了馬上生效
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# CSS 可以長期快取
+[[headers]]
+  for = "/style.css"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+# ── 基本安全標頭 ────────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
