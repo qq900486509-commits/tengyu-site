@@ -1,0 +1,10 @@
+# 建置產出，由 Netlify 自動產生，不需要進版控
+dist/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# 系統檔
+.DS_Store
