@@ -13,22 +13,44 @@
   TZ = "Asia/Taipei"
 
 # ── 快取設定 ────────────────────────────────
-# HTML 不快取，改了馬上生效
+#
+# ⚠ 不要把下面第一條改成 "/*.html"。
+#
+# 本站用的是美化網址（/thanks/、/pricing/、/blog/xxx/），
+# 送到伺服器的請求路徑是「/thanks/」而不是「/thanks/index.html」，
+# 所以 "/*.html" 這個樣式比對不到任何一個頁面，等於整條規則失效。
+#
+# 2026-10-15 就是因為這個寫法，CDN 快取了 /thanks/ 的 404 回應，
+# 加上查詢字串（?cb=1）才繞得過去。排程文章上線時也會有同樣風險：
+# 訪客或 Google 可能拿到舊版本。
+#
+# 預設全部不快取，再針對靜態資源個別放寬。
 [[headers]]
-  for = "/*.html"
+  for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
 
-# CSS 可以長期快取
+# 樣式表內容穩定，可長期快取（改版時檔名不變，但有 ETag 驗證）
 [[headers]]
   for = "/style.css"
   [headers.values]
     Cache-Control = "public, max-age=604800"
 
-# ── 基本安全標頭 ────────────────────────────
+# 圖片等靜態資源
 [[headers]]
-  for = "/*"
+  for = "/*.jpg"
   [headers.values]
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    X-Frame-Options = "SAMEORIGIN"
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
