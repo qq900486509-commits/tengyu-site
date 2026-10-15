@@ -355,3 +355,37 @@ Netlify → Project configuration → **Forms** → Form notifications →
 免費方案每月 100 筆。超過會停止接收，所以如果量變大要注意。
 
 收到的名單在 Netlify → **Forms** 可以看到，也能匯出 CSV。
+
+---
+
+## ⚠ Private repo 的提交者限制（Netlify 免費方案）
+
+這個 repo 是 private，而 **Netlify 免費方案的 private repo 只允許一位 Git 貢獻者**。
+
+如果 commit 的作者不是帳號擁有者，建置會直接被擋下，錯誤訊息是：
+
+```
+Build blocked: Unrecognized Git contributor.
+This plan allows only verified account members to push to private repos
+```
+
+### 所以提交時務必指定作者
+
+```bash
+git -c user.name="qq900486509-commits" \
+    -c user.email="qq900486509@gmail.com" \
+    commit -m "訊息"
+```
+
+協作者（例如 Claude）用 commit 訊息結尾的 `Co-Authored-By:` 標註即可，
+那一行不影響 Netlify 的貢獻者判定。
+
+### 如果已經被擋下來了
+
+被擋的那次建置無法重跑。用正確的作者身分再推一個 commit，
+Netlify 會建置新的 HEAD，問題就解除了。
+
+### 其他解法（不建議）
+
+- 把 repo 改回 public——失去私密性
+- 升級 Netlify Pro——為了這件事付費不划算
