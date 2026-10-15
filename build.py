@@ -124,21 +124,21 @@ SITE = {
     "analytics": {
         # GA4 評估 ID。在 GA4 → 管理 → 資料串流 → 你的網站串流 → 右上角
         # 格式：G-XXXXXXXXXX
-        "ga4_id": "",
+        "ga4_id": "G-X3GK5SKLB1",
 
         # Meta 像素 ID。在 事件管理工具 → 資料來源 → 你的像素 → 名稱下方
         # 格式：15 到 16 位數字
-        "meta_pixel_id": "",
+        "meta_pixel_id": "3064454663724891",
 
         # Google Ads 轉換 ID。在 Google Ads → 目標 → 轉換 → 摘要 →
         # 點進你建立的轉換動作 → 標記設定
         # 格式：AW-XXXXXXXXX
-        "google_ads_id": "",
+        "google_ads_id": "AW-18514627086",
 
         # Google Ads 轉換標籤。和上面同一個畫面，在轉換 ID 旁邊
         # 格式：一串英數字，例如 AbC-D_efGhIjKlMnO
         # 這一項和 google_ads_id 要一起填，少一個就不會送出轉換
-        "google_ads_lead_label": "",
+        "google_ads_lead_label": "AeILCK-L5J0dEI6Uu_xE",
     },
 }
 
