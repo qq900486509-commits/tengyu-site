@@ -358,34 +358,37 @@ Netlify → Project configuration → **Forms** → Form notifications →
 
 ---
 
-## ⚠ Private repo 的提交者限制（Netlify 免費方案）
+## ⚠ 這個 repo 必須維持 public
 
-這個 repo 是 private，而 **Netlify 免費方案的 private repo 只允許一位 Git 貢獻者**。
+**不要把 repo 改成 private。**
 
-如果 commit 的作者不是帳號擁有者，建置會直接被擋下，錯誤訊息是：
+Netlify 免費方案的 private repo 只允許一位 Git 貢獻者，而且檢查的是
+**commit 的作者**，不是誰觸發建置。作者對不上就直接封鎖：
 
 ```
 Build blocked: Unrecognized Git contributor.
 This plan allows only verified account members to push to private repos
 ```
 
-### 所以提交時務必指定作者
+2026-10-15 曾經改成 private，結果連續四次建置失敗，包含手動
+Trigger deploy 也一樣被擋，最後改回 public 才恢復。
 
-```bash
-git -c user.name="qq900486509-commits" \
-    -c user.email="qq900486509@gmail.com" \
-    commit -m "訊息"
-```
+### 為什麼 public 沒關係
 
-協作者（例如 Claude）用 commit 訊息結尾的 `Co-Authored-By:` 標註即可，
-那一行不影響 Netlify 的貢獻者判定。
+這個 repo 裡沒有任何機密：
 
-### 如果已經被擋下來了
+| 內容 | 說明 |
+| --- | --- |
+| 文章 Markdown | 本來就公開在網站上 |
+| `build.py`、`templates/` | 建置邏輯，無祕密 |
+| 追蹤 ID（GA4／Pixel／Ads） | 看網頁原始碼就有 |
+| `netlify.toml` | 無祕密 |
+| `.github/workflows/publish.yml` | Build hook 存在 GitHub Secrets，不在 repo 裡 |
 
-被擋的那次建置無法重跑。用正確的作者身分再推一個 commit，
-Netlify 會建置新的 HEAD，問題就解除了。
+唯一真正的祕密是 Netlify Build Hook 網址，它存在 GitHub Secrets，
+不會進版控。
 
-### 其他解法（不建議）
+### 真的需要 private 的話
 
-- 把 repo 改回 public——失去私密性
-- 升級 Netlify Pro——為了這件事付費不划算
+要嘛升級 Netlify Pro，要嘛確保所有 commit 的作者都是已綁定的
+Netlify 帳號成員（在 Netlify 的 manage Git contributors 設定）。
