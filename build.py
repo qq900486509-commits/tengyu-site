@@ -111,6 +111,35 @@ SITE = {
                         "直銷 / 保健", "餐飲 / 民宿", "已有數位基礎、想導入 AI", "其他"],
     "form_budgets": ["請選擇預算範圍", "每月 3 萬以下", "每月 3–10 萬",
                      "每月 10–30 萬", "每月 30 萬以上", "尚未確定"],
+
+    # ===================================================================
+    # 廣告追蹤碼設定
+    # ===================================================================
+    # 把下面四個值填上就會生效，留空則完全不會輸出該平台的追蹤碼。
+    # 留空是安全的——不會有半套的程式碼跑在線上。
+    #
+    # 填好之後執行 python3 build.py，或直接推上 GitHub 讓 Netlify 建置。
+    # 驗證方式見 README.md 的「廣告追蹤」章節。
+    # ===================================================================
+    "analytics": {
+        # GA4 評估 ID。在 GA4 → 管理 → 資料串流 → 你的網站串流 → 右上角
+        # 格式：G-XXXXXXXXXX
+        "ga4_id": "",
+
+        # Meta 像素 ID。在 事件管理工具 → 資料來源 → 你的像素 → 名稱下方
+        # 格式：15 到 16 位數字
+        "meta_pixel_id": "",
+
+        # Google Ads 轉換 ID。在 Google Ads → 目標 → 轉換 → 摘要 →
+        # 點進你建立的轉換動作 → 標記設定
+        # 格式：AW-XXXXXXXXX
+        "google_ads_id": "",
+
+        # Google Ads 轉換標籤。和上面同一個畫面，在轉換 ID 旁邊
+        # 格式：一串英數字，例如 AbC-D_efGhIjKlMnO
+        # 這一項和 google_ads_id 要一起填，少一個就不會送出轉換
+        "google_ads_lead_label": "",
+    },
 }
 
 CATEGORIES = {
@@ -462,8 +491,10 @@ def main():
         body = pg["_body"].replace("{{root}}", SITE["root"])
         content = wrap_tables(md2html(body))
         write(pg["url"], render(pg, content, pg.get("template")))
-        record(pg["url"], "1.0" if pg["url"] == "" else "0.8",
-               "weekly" if pg["url"] == "" else "monthly")
+        # noindex 的頁面（例如感謝頁）不列入 sitemap，否則等於請 Google 來收錄
+        if not pg.get("noindex"):
+            record(pg["url"], "1.0" if pg["url"] == "" else "0.8",
+                   "weekly" if pg["url"] == "" else "monthly")
 
     # ---- 產出：案例 ----
     for c in cases:

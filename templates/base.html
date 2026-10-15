@@ -40,8 +40,41 @@
 <script type="application/ld+json">
 {{ page.jsonld }}
 </script>
+
+{#- ===== 廣告追蹤碼（ID 設定在 build.py 的 SITE["analytics"]）===== #}
+{%- set an = site.analytics %}
+{%- set gtag_src = an.ga4_id or an.google_ads_id %}
+{%- if gtag_src %}
+<!-- Google tag (gtag.js) — GA4{% if an.google_ads_id %} + Google Ads{% endif %} -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ gtag_src }}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+{%- if an.ga4_id %}
+  gtag('config', '{{ an.ga4_id }}');
+{%- endif %}
+{%- if an.google_ads_id %}
+  gtag('config', '{{ an.google_ads_id }}');
+{%- endif %}
+</script>
+{%- endif %}
+{%- if an.meta_pixel_id %}
+<!-- Meta Pixel -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '{{ an.meta_pixel_id }}');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" alt=""
+src="https://www.facebook.com/tr?id={{ an.meta_pixel_id }}&ev=PageView&noscript=1"></noscript>
+{%- endif %}
 </head>
-<body>
+<body{% if page.conversion %} data-conversion="{{ page.conversion }}"{% endif %}>
 <a class="skip" href="#main">跳到主要內容</a>
 
 <nav class="nav">
@@ -141,16 +174,49 @@
     t.setAttribute('aria-expanded',open?'true':'false');
     t.setAttribute('aria-label',open?'關閉選單':'開啟選單');
   });}
-  var f=document.getElementById('consultForm');
-  if(f){f.addEventListener('submit',function(e){
-    e.preventDefault();
-    var g=function(n){return f.elements[n]?f.elements[n].value.trim():'';};
-    var body=['姓名 / 稱呼：'+g('name'),'公司 / 品牌：'+g('company'),'聯絡方式：'+g('contact'),
-      '產業別：'+g('industry'),'每月廣告預算：'+g('budget'),'','想達成的目標：',g('goal')].join('\n');
-    window.location.href='mailto:{{ site.email }}?subject='
-      +encodeURIComponent('【網站諮詢】'+(g('company')||g('name')))
-      +'&body='+encodeURIComponent(body);
-  });}
+})();
+
+/* ===== 廣告事件追蹤 =====
+   一次送到 GA4、Meta Pixel、Google Ads。
+   任何一個平台沒設定 ID 就自動跳過，不會報錯。   */
+(function(){
+  var ADS_SEND_TO = {% if an.google_ads_id and an.google_ads_lead_label %}'{{ an.google_ads_id }}/{{ an.google_ads_lead_label }}'{% else %}null{% endif %};
+
+  // name: GA4 事件名稱／fb: Meta 標準事件名稱（不送就傳 null）／ads: 是否計入 Google Ads 轉換
+  window.tyTrack = function(name, fb, ads, params){
+    params = params || {};
+    try { if (window.gtag) gtag('event', name, params); } catch(e){}
+    try { if (window.fbq && fb) fbq('track', fb); } catch(e){}
+    try { if (ads && ADS_SEND_TO && window.gtag) gtag('event','conversion',{send_to:ADS_SEND_TO}); } catch(e){}
+  };
+
+  // 1. 感謝頁＝正式轉換點（表單真的送出成功才會到這頁）
+  if (document.body.dataset.conversion === 'lead') {
+    window.tyTrack('generate_lead', 'Lead', true, {form:'consult'});
+  }
+
+  // 2. 表單開始填寫——用來看有多少人開始填卻沒送出
+  var form = document.getElementById('consultForm');
+  if (form) {
+    var started = false;
+    form.addEventListener('input', function(){
+      if (started) return;
+      started = true;
+      window.tyTrack('form_start', null, false, {form:'consult'});
+    }, true);
+  }
+
+  // 3. LINE 與 Email 的點擊也是名單，一併追蹤
+  document.addEventListener('click', function(e){
+    var a = e.target.closest ? e.target.closest('a') : null;
+    if (!a) return;
+    var href = a.getAttribute('href') || '';
+    if (href.indexOf('lin.ee') > -1 || href.indexOf('line.me') > -1) {
+      window.tyTrack('contact_line_click', 'Contact', true, {method:'line'});
+    } else if (href.indexOf('mailto:') === 0) {
+      window.tyTrack('contact_email_click', 'Contact', true, {method:'email'});
+    }
+  });
 })();
 </script>
 </body>

@@ -9,7 +9,16 @@
 
 <section class="section bg-cream">
   <div class="wrap-narrow">
-    <form class="form" id="consultForm">
+    <form class="form" id="consultForm"
+          name="consult" method="POST"
+          action="{{ site.root }}thanks/"
+          data-netlify="true" data-netlify-honeypot="bot-field">
+      {#- Netlify Forms 必要欄位：表單識別名稱 #}
+      <input type="hidden" name="form-name" value="consult">
+      {#- 蜜罐欄位：真人看不到，機器人會填，填了就擋掉 #}
+      <p style="display:none">
+        <label>請留空白 <input name="bot-field"></label>
+      </p>
       <div class="form-row">
         <label>
           <span>姓名 / 稱呼 <em>*</em></span>
@@ -43,7 +52,7 @@
         <textarea name="goal" rows="4" placeholder="簡單描述你的產品、目前狀況與想達成的目標"></textarea>
       </label>
       <button type="submit">送出諮詢表單 →</button>
-      <p class="form-note">送出後將以 Email 寄給我們，我們會在 24 小時內回覆。<br>你的資料僅用於本次諮詢聯繫，我們不會外流。詳見<a href="{{ site.root }}privacy/">隱私權政策</a>。</p>
+      <p class="form-note">我們會在 24 小時內回覆。<br>你的資料僅用於本次諮詢聯繫，我們不會外流。詳見<a href="{{ site.root }}privacy/">隱私權政策</a>。</p>
     </form>
 
     <div style="display:flex;align-items:center;gap:16px;max-width:620px;margin:32px auto 0">

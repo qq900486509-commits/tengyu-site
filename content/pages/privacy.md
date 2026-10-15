@@ -35,7 +35,7 @@ lead: "本政策說明騰域整合行銷有限公司如何處理您透過本網�
 
 ## 資料如何傳送
 
-本網站的諮詢表單透過您裝置上的郵件程式，將內容寄送至 wesley@tengyuim.com。表單內容不會儲存於本網站伺服器。
+本網站的諮詢表單由網站代管服務商 Netlify 接收與儲存，並同步以電子郵件通知至 wesley@tengyuim.com。表單內容儲存於 Netlify 的伺服器，僅本公司人員可以存取。
 
 ## 資料保存與刪除
 
@@ -43,9 +43,29 @@ lead: "本政策說明騰域整合行銷有限公司如何處理您透過本網�
 
 聯絡信箱：wesley@tengyuim.com
 
-## Cookie 使用
+## Cookie 與第三方分析工具
 
-本網站可能使用 Cookie 或類似技術，以了解網站使用狀況並改善使用體驗。您可以透過瀏覽器設定拒絕 Cookie，但部分功能可能因此受到影響。
+本網站使用 Cookie 及類似技術，以了解網站使用狀況、評估廣告成效並改善使用體驗。具體使用的服務如下：
+
+| 服務 | 提供者 | 用途 |
+| --- | --- | --- |
+| Google Analytics 4 | Google | 統計網站流量與使用者行為 |
+| Google Ads 轉換追蹤 | Google | 評估 Google 廣告的成效 |
+| Meta 像素 | Meta（Facebook） | 評估 Facebook 與 Instagram 廣告的成效，並建立廣告再行銷名單 |
+
+這些工具會蒐集您的瀏覽行為資料，例如造訪的頁面、停留時間、來源管道、裝置類型與概略地理位置。這些資料由上述第三方服務商處理，並受其各自的隱私權政策規範：
+
+- [Google 隱私權政策](https://policies.google.com/privacy)
+- [Meta 隱私政策](https://www.facebook.com/privacy/policy)
+
+**您可以拒絕這些追蹤**，方式包括：
+
+- 透過瀏覽器設定封鎖第三方 Cookie
+- 安裝 [Google Analytics 停用瀏覽器外掛程式](https://tools.google.com/dlpage/gaoptout)
+- 在 Facebook 與 Instagram 的「廣告偏好設定」中調整
+- 開啟瀏覽器的「請勿追蹤」或隱私瀏覽模式
+
+拒絕追蹤不會影響您瀏覽本網站或使用諮詢表單的功能。
 
 ## 第三方連結
 

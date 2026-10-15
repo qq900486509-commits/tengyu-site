@@ -278,3 +278,80 @@ Google 不會因為你「規律地每週發一篇」而給你加分。它在意�
 
 **文章沒出現在列表上**
 檢查 `date` 格式是不是 `YYYY-MM-DD`，以及 `category` 是不是 `industry`／`ads`／`ai` 三者之一。
+
+---
+
+## 廣告追蹤（GA4 / Meta 像素 / Google Ads）
+
+### 怎麼啟用
+
+打開 `build.py`，找到 `SITE` 設定裡的 `analytics` 區塊，把四個值填上：
+
+```python
+"analytics": {
+    "ga4_id": "G-XXXXXXXXXX",
+    "meta_pixel_id": "1234567890123456",
+    "google_ads_id": "AW-XXXXXXXXX",
+    "google_ads_lead_label": "AbC-D_efGhIjKlMnO",
+},
+```
+
+**留空是安全的**——該平台的追蹤碼完全不會輸出，不會有半套的程式碼跑在線上。
+可以只填其中一兩個，先上線 GA4 再補廣告平台。
+
+`google_ads_id` 和 `google_ads_lead_label` 要**一起填**，少一個就不會送出轉換。
+
+### 各個 ID 在哪裡拿
+
+| 項目 | 位置 |
+| --- | --- |
+| GA4 評估 ID | GA4 → 管理 → 資料串流 → 你的網站串流 → 右上角 |
+| Meta 像素 ID | 事件管理工具 → 資料來源 → 你的像素 → 名稱下方 |
+| Google Ads 轉換 ID 與標籤 | Google Ads → 目標 → 轉換 → 點進轉換動作 → 標記設定 |
+
+### 會追蹤哪些事件
+
+| 觸發時機 | GA4 事件 | Meta 事件 | 計入 Google Ads 轉換 |
+| --- | --- | --- | --- |
+| 每個頁面載入 | `page_view`（自動） | `PageView` | — |
+| 表單送出成功（到達 `/thanks/`） | `generate_lead` | `Lead` | ✅ |
+| 開始填寫表單 | `form_start` | — | — |
+| 點擊 LINE 連結 | `contact_line_click` | `Contact` | ✅ |
+| 點擊 Email 連結 | `contact_email_click` | `Contact` | ✅ |
+
+`form_start` 用來診斷漏斗：如果開始填的人很多但 `generate_lead` 很少，
+代表表單本身有問題（欄位太多、某個欄位卡住），不是流量品質的問題。
+
+### 轉換為什麼綁在感謝頁
+
+表單送出成功後，Netlify 會把訪客導到 `/thanks/`。
+那一頁的 `<body>` 帶有 `data-conversion="lead"`，載入時才送出轉換事件。
+
+這表示**只有真正送出成功的才算轉換**，不是「按了送出按鈕」。
+廣告平台的演算法會拿這個訊號去優化，訊號準確與否直接決定投放品質。
+
+`/thanks/` 設為 `noindex` 且不列入 sitemap，不會被 Google 收錄。
+
+### 怎麼驗證有沒有生效
+
+填好 ID 並部署之後：
+
+1. **GA4** —— 報表 → 即時。自己開一次網站，看有沒有出現在即時人數裡
+2. **Meta 像素** —— 裝 Chrome 擴充功能 Meta Pixel Helper，開網站看有沒有亮起來
+3. **Google Ads** —— 目標 → 轉換，狀態會從「未驗證」變成「正在記錄轉換」（需要等幾小時到一天）
+4. **完整流程** —— 自己填一次表單送出，確認：
+   - 有跳到 `/thanks/`
+   - Netlify 後台 → Forms 看得到那筆資料
+   - 信箱有收到通知（要先在 Netlify 設定通知，見下方）
+   - GA4 即時報表的事件裡出現 `generate_lead`
+
+### Netlify Forms 的設定
+
+表單會自動被 Netlify 偵測，但**通知信要自己開**：
+
+Netlify → Project configuration → **Forms** → Form notifications →
+**Add notification** → Email notification → 填 wesley@tengyuim.com
+
+免費方案每月 100 筆。超過會停止接收，所以如果量變大要注意。
+
+收到的名單在 Netlify → **Forms** 可以看到，也能匯出 CSV。
