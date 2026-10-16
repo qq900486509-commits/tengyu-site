@@ -238,11 +238,18 @@ src="https://www.facebook.com/tr?id={{ an.meta_pixel_id }}&ev=PageView&noscript=
   window.tyTrack({oai:{event:'page_viewed', type:'contents'}});
 
   if (document.body.dataset.conversion === 'lead') {
-    var LEAD_KEY = 'ty_lead_fired';
-    var alreadyFired = false;
-    try { alreadyFired = sessionStorage.getItem(LEAD_KEY) === '1'; } catch(e){}
-    if (!alreadyFired) {
-      try { sessionStorage.setItem(LEAD_KEY, '1'); } catch(e){}
+    /* 去重改用「時間窗」而非整個 session：
+       要擋的是重新整理／上一頁造成的重複，那通常發生在幾秒到幾分鐘內。
+       原本用 sessionStorage 會鎖住整個分頁的生命週期，分頁開著好幾天的話，
+       客戶隔天送出的第二筆真實諮詢也會被吃掉。
+       改成 30 分鐘內不重複計算，之後的提交視為新的一筆。
+       localStorage 讓它跨分頁生效（在新分頁開啟感謝頁也不會重複計）。*/
+    var LEAD_KEY = 'ty_lead_fired_at';
+    var DEDUP_MS = 30 * 60 * 1000;
+    var lastFired = 0;
+    try { lastFired = parseInt(localStorage.getItem(LEAD_KEY) || '0', 10) || 0; } catch(e){}
+    if (Date.now() - lastFired > DEDUP_MS) {
+      try { localStorage.setItem(LEAD_KEY, String(Date.now())); } catch(e){}
       window.tyTrack({
         ga: 'generate_lead', params: {form:'consult'},
         fb: 'Lead', ads: true,
