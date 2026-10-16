@@ -231,6 +231,12 @@ src="https://www.facebook.com/tr?id={{ an.meta_pixel_id }}&ev=PageView&noscript=
   /* 1. 感謝頁＝正式轉換點（表單真的被 Netlify 收下才會轉址到這頁）
         用 sessionStorage 擋掉重新整理／回上一頁造成的重複計算。
         同一個 session 只計一次，與 Google Ads 的「計算方式：一次」一致。 */
+  /* 0. ChatGPT Ads 的頁面瀏覽事件。
+        GA4 與 Meta 的基底碼會自動送 pageview，OpenAI 的 SDK 不會——
+        2026-10-16 由 Ads Manager 事件串流確認：頁面載入只出現「像素初始化」，
+        沒有 page_viewed，因此在這裡手動補送。 */
+  window.tyTrack({oai:{event:'page_viewed', type:'contents'}});
+
   if (document.body.dataset.conversion === 'lead') {
     var LEAD_KEY = 'ty_lead_fired';
     var alreadyFired = false;

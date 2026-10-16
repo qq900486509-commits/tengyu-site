@@ -148,7 +148,7 @@ SITE = {
         # 用途是確認 SDK 有沒有自動送出 page_viewed（官方文件沒寫），
         # 以及 lead_created 是否正確送出。
         # 確認完成後改成 False。
-        "chatgpt_debug": True,
+        "chatgpt_debug": False,
     },
 }
 
