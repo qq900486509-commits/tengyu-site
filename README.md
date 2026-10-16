@@ -306,6 +306,7 @@ Google 不會因為你「規律地每週發一篇」而給你加分。它在意�
 | 項目 | 位置 |
 | --- | --- |
 | GA4 評估 ID | GA4 → 管理 → 資料串流 → 你的網站串流 → 右上角 |
+| ChatGPT Ads 像素 ID | ChatGPT Ads Manager → conversions 分頁 |
 | Meta 像素 ID | 事件管理工具 → 資料來源 → 你的像素 → 名稱下方 |
 | Google Ads 轉換 ID 與標籤 | Google Ads → 目標 → 轉換 → 點進轉換動作 → 標記設定 |
 
@@ -318,6 +319,23 @@ Google 不會因為你「規律地每週發一篇」而給你加分。它在意�
 | 開始填寫表單 | `form_start` | — | — |
 | 點擊 LINE 連結 | `contact_line_click` | `Contact` | ✅ |
 | 點擊 Email 連結 | `contact_email_click` | `Contact` | ✅ |
+
+ChatGPT Ads（OpenAI）送出的對應事件：
+
+| 觸發時機 | ChatGPT Ads 事件 | event data |
+| --- | --- | --- |
+| 表單送出成功 | `lead_created` | `{type:"customer_action"}` |
+| 點擊 LINE | `custom`（`contact_line_click`） | `{type:"custom"}` |
+| 點擊 Email | `custom`（`contact_email_click`） | `{type:"custom"}` |
+
+ChatGPT Ads 的 Base Code 是 OpenAI 官方原文，**載入器那一段不要改動**——
+佇列變數是 `q.q`，與多數 SDK 慣用的 `q.queue` 不同，改錯會靜默失效。
+
+### 轉換去重
+
+感謝頁的轉換事件用 `sessionStorage`（鍵名 `ty_lead_fired`）鎖定，
+同一個 session 只計一次。這是為了擋掉使用者重新整理或按上一頁
+造成的重複計算，與 Google Ads「計算方式：一次」的設定一致。
 
 `form_start` 用來診斷漏斗：如果開始填的人很多但 `generate_lead` 很少，
 代表表單本身有問題（欄位太多、某個欄位卡住），不是流量品質的問題。

@@ -139,6 +139,16 @@ SITE = {
         # 格式：一串英數字，例如 AbC-D_efGhIjKlMnO
         # 這一項和 google_ads_id 要一起填，少一個就不會送出轉換
         "google_ads_lead_label": "AeILCK-L5J0dEI6Uu_xE",
+
+        # ChatGPT Ads（OpenAI）測量像素 ID。
+        # 在 ChatGPT Ads Manager → conversions 分頁建立
+        "chatgpt_pixel_id": "85p6NEHus97yUfGJiYfWmu",
+
+        # ChatGPT Ads 偵錯模式：SDK 會把活動印到瀏覽器主控台。
+        # 用途是確認 SDK 有沒有自動送出 page_viewed（官方文件沒寫），
+        # 以及 lead_created 是否正確送出。
+        # 確認完成後改成 False。
+        "chatgpt_debug": True,
     },
 }
 

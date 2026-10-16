@@ -73,6 +73,29 @@ fbq('track', 'PageView');
 <noscript><img height="1" width="1" style="display:none" alt=""
 src="https://www.facebook.com/tr?id={{ an.meta_pixel_id }}&ev=PageView&noscript=1"></noscript>
 {%- endif %}
+{%- if an.chatgpt_pixel_id %}
+<!-- ChatGPT Ads 測量像素（OpenAI 官方 Base Code，原文照貼，勿改動載入器） -->
+<script>
+  (function (w, d, s, u) {
+    if (w.oaiq) return;
+    var q = function () {
+      q.q.push(arguments);
+    };
+    q.q = [];
+    w.oaiq = q;
+    var js = d.createElement(s);
+    js.async = true;
+    js.src = u;
+    var f = d.getElementsByTagName(s)[0];
+    f.parentNode.insertBefore(js, f);
+  })(window, document, "script", "https://bzrcdn.openai.com/sdk/oaiq.min.js");
+
+  oaiq("init", {
+    pixelId: "{{ an.chatgpt_pixel_id }}"{% if an.chatgpt_debug %},
+    debug: true{% endif %}
+  });
+</script>
+{%- endif %}
 </head>
 <body{% if page.conversion %} data-conversion="{{ page.conversion }}"{% endif %}>
 <a class="skip" href="#main">跳到主要內容</a>
@@ -182,17 +205,44 @@ src="https://www.facebook.com/tr?id={{ an.meta_pixel_id }}&ev=PageView&noscript=
 (function(){
   var ADS_SEND_TO = {% if an.google_ads_id and an.google_ads_lead_label %}'{{ an.google_ads_id }}/{{ an.google_ads_lead_label }}'{% else %}null{% endif %};
 
-  // name: GA4 事件名稱／fb: Meta 標準事件名稱（不送就傳 null）／ads: 是否計入 Google Ads 轉換
-  window.tyTrack = function(name, fb, ads, params){
-    params = params || {};
-    try { if (window.gtag) gtag('event', name, params); } catch(e){}
-    try { if (window.fbq && fb) fbq('track', fb); } catch(e){}
-    try { if (ads && ADS_SEND_TO && window.gtag) gtag('event','conversion',{send_to:ADS_SEND_TO}); } catch(e){}
+  /* opts.ga     GA4 事件名稱
+     opts.params GA4 事件參數
+     opts.fb     Meta 標準事件名稱（不送就省略）
+     opts.ads    true 時計入 Google Ads 轉換
+     opts.oai    ChatGPT Ads：{event, type} 標準事件，
+                 或 {event:'custom', type:'custom', customName:'...'} 自訂事件 */
+  window.tyTrack = function(opts){
+    opts = opts || {};
+    try { if (window.gtag && opts.ga) gtag('event', opts.ga, opts.params || {}); } catch(e){}
+    try { if (window.fbq && opts.fb) fbq('track', opts.fb); } catch(e){}
+    try { if (opts.ads && ADS_SEND_TO && window.gtag) gtag('event','conversion',{send_to:ADS_SEND_TO}); } catch(e){}
+    try {
+      if (window.oaiq && opts.oai) {
+        var o = opts.oai;
+        if (o.customName) {
+          oaiq('measure', o.event, {type:o.type}, {custom_event_name:o.customName});
+        } else {
+          oaiq('measure', o.event, {type:o.type});
+        }
+      }
+    } catch(e){}
   };
 
-  // 1. 感謝頁＝正式轉換點（表單真的送出成功才會到這頁）
+  /* 1. 感謝頁＝正式轉換點（表單真的被 Netlify 收下才會轉址到這頁）
+        用 sessionStorage 擋掉重新整理／回上一頁造成的重複計算。
+        同一個 session 只計一次，與 Google Ads 的「計算方式：一次」一致。 */
   if (document.body.dataset.conversion === 'lead') {
-    window.tyTrack('generate_lead', 'Lead', true, {form:'consult'});
+    var LEAD_KEY = 'ty_lead_fired';
+    var alreadyFired = false;
+    try { alreadyFired = sessionStorage.getItem(LEAD_KEY) === '1'; } catch(e){}
+    if (!alreadyFired) {
+      try { sessionStorage.setItem(LEAD_KEY, '1'); } catch(e){}
+      window.tyTrack({
+        ga: 'generate_lead', params: {form:'consult'},
+        fb: 'Lead', ads: true,
+        oai: {event:'lead_created', type:'customer_action'}
+      });
+    }
   }
 
   // 2. 表單開始填寫——用來看有多少人開始填卻沒送出
@@ -202,7 +252,7 @@ src="https://www.facebook.com/tr?id={{ an.meta_pixel_id }}&ev=PageView&noscript=
     form.addEventListener('input', function(){
       if (started) return;
       started = true;
-      window.tyTrack('form_start', null, false, {form:'consult'});
+      window.tyTrack({ga:'form_start', params:{form:'consult'}});
     }, true);
   }
 
@@ -212,9 +262,17 @@ src="https://www.facebook.com/tr?id={{ an.meta_pixel_id }}&ev=PageView&noscript=
     if (!a) return;
     var href = a.getAttribute('href') || '';
     if (href.indexOf('lin.ee') > -1 || href.indexOf('line.me') > -1) {
-      window.tyTrack('contact_line_click', 'Contact', true, {method:'line'});
+      window.tyTrack({
+        ga: 'contact_line_click', params: {method:'line'},
+        fb: 'Contact', ads: true,
+        oai: {event:'custom', type:'custom', customName:'contact_line_click'}
+      });
     } else if (href.indexOf('mailto:') === 0) {
-      window.tyTrack('contact_email_click', 'Contact', true, {method:'email'});
+      window.tyTrack({
+        ga: 'contact_email_click', params: {method:'email'},
+        fb: 'Contact', ads: true,
+        oai: {event:'custom', type:'custom', customName:'contact_email_click'}
+      });
     }
   });
 })();
