@@ -40,7 +40,7 @@ SITE = {
     "root": "/",                      # 若放在子目錄，改成 "/子目錄/"
     "email": "wesley@tengyuim.com",
     "line": "https://lin.ee/U1ZY9dh",
-    "address": "臺北市松山區八德路4段699號5樓之3",
+    "address": "台北市松山區南京東路四段75號4樓之一",
     "year": datetime.date.today().year,
     "favicon": (
         "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'"
@@ -255,7 +255,7 @@ def org_schema():
         "priceRange": "NT$15,000 - NT$35,000",
         "address": {
             "@type": "PostalAddress",
-            "streetAddress": "八德路4段699號5樓之3",
+            "streetAddress": "南京東路四段75號4樓之一",
             "addressLocality": "松山區",
             "addressRegion": "臺北市",
             "addressCountry": "TW",
