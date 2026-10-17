@@ -410,3 +410,39 @@ Trigger deploy 也一樣被擋，最後改回 public 才恢復。
 
 要嘛升級 Netlify Pro，要嘛確保所有 commit 的作者都是已綁定的
 Netlify 帳號成員（在 Netlify 的 manage Git contributors 設定）。
+
+---
+
+## GEO（生成式引擎最佳化）
+
+讓 ChatGPT、Perplexity、Google AI 概覽等 AI 回答引擎能找到並引用本站內容。
+
+### llms.txt
+
+`dist/llms.txt` 由 `build.py` **自動產生**，內容來自 SITE 設定與各篇文章、
+案例的 front matter，排程文章上線時會跟著更新，不需要手動維護。
+
+要調整開頭的站台描述，改 `build.py` 裡 `# ---- llms.txt ----` 區塊的 `L` 列表。
+
+### dateModified
+
+每一頁的 JSON-LD 都有 `WebPage` 節點，帶 `dateModified`。日期來源依序為：
+
+1. front matter 的 `updated` 欄位（想手動指定時用）
+2. **git 紀錄**——該來源檔最後一次 commit 的日期
+3. front matter 的 `date`（文章發布日）
+
+**不要改成用建置時間。** 每週排程建置一次，若用建置時間等於宣稱全站每週
+都更新過，那是假的新鮮度訊號，搜尋引擎與 AI 引擎都看得出來。
+
+排程文章的檔案會在發布日之前 commit，所以取 git 日期與發布日的**較晚者**，
+避免出現「修改時間早於發布時間」這種語意矛盾。
+
+自動產生的列表頁（`/blog/`、`/cases/`、分類頁、404）沒有來源檔，
+不會輸出 `dateModified`——寧可沒有，也不編造。
+
+### 還沒做的（需要你提供資料）
+
+文章目前的 `author` 是公司名稱，沒有具名的人。加上具名作者與簡介
+（姓名、職稱、經歷）對 AI 引擎的 E-E-A-T 判斷幫助最大，是目前投報率
+最高的一項改善。

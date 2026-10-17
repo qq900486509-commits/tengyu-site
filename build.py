@@ -13,7 +13,7 @@
 sitemap.xml、feed.xml、文章列表、分類頁、分頁都會自動產生。
 """
 
-import json, os, re, shutil, sys, datetime, html as htmllib
+import json, os, re, shutil, subprocess, sys, datetime, html as htmllib
 from pathlib import Path
 
 import markdown
@@ -289,6 +289,56 @@ def faq_schema(faq):
     }
 
 
+# ---- 內容最後修改時間 ----------------------------------------------
+# 用 git 紀錄取得每個來源檔真正的最後異動時間，而不是用建置時間。
+# 用建置時間等於宣稱「每週重建一次＝每頁都更新了」，那是假的新鮮度訊號，
+# 搜尋引擎與 AI 引擎都看得出來，也對讀者不誠實。
+_GIT_DATE_CACHE = {}
+_GIT_AVAILABLE = None
+
+
+def git_last_modified(src_path):
+    """回傳來源檔最後一次 commit 的 ISO 日期；取不到則回 None。"""
+    global _GIT_AVAILABLE
+    if _GIT_AVAILABLE is False:
+        return None
+    key = str(src_path)
+    if key in _GIT_DATE_CACHE:
+        return _GIT_DATE_CACHE[key]
+    try:
+        out = subprocess.run(
+            ["git", "log", "-1", "--format=%cs", "--", key],
+            cwd=ROOT, capture_output=True, text=True, timeout=10,
+        )
+        val = out.stdout.strip() or None
+        if _GIT_AVAILABLE is None:
+            _GIT_AVAILABLE = val is not None
+            if not _GIT_AVAILABLE:
+                print("  ⚠ 取不到 git 紀錄，dateModified 將退回使用 front matter 的日期")
+    except Exception:
+        _GIT_AVAILABLE = False
+        val = None
+    _GIT_DATE_CACHE[key] = val
+    return val
+
+
+def modified_date(page):
+    """決定 dateModified，依序：front matter 的 updated → git 紀錄 → 發布日。
+
+    排程文章的檔案會在發布日之前就 commit，直接用 git 日期會讓
+    dateModified 早於 datePublished（「修改時間早於發布時間」在語意上
+    不成立，結構化資料驗證工具也會標為異常）。因此取兩者較晚的。
+    ISO 日期字串的字典序即時間序，可直接比較。
+    """
+    if page.get("updated"):
+        return page["updated"]
+    published = page.get("date")
+    gitdate = git_last_modified(page["_src"]) if page.get("_src") else None
+    if gitdate and published:
+        return max(gitdate, published)
+    return gitdate or published
+
+
 def make_jsonld(page):
     graph = []
     layout = page.get("layout")
@@ -305,6 +355,24 @@ def make_jsonld(page):
     if page.get("crumbs"):
         graph.append(breadcrumb_schema(page["crumbs"]))
 
+    # 每一頁都加一個 WebPage 節點，承載最後修改時間。
+    # 這是搜尋引擎與 AI 回答引擎判斷內容新舊的依據；沒有日期的頁面
+    # 在被引用的競爭中會吃虧。日期取自 git 紀錄，是真的異動時間。
+    webpage = {
+        "@type": "WebPage",
+        "@id": SITE["url"] + page["url"] + "#webpage",
+        "url": SITE["url"] + page["url"],
+        "name": page["title"],
+        "description": page["description"],
+        "inLanguage": "zh-TW",
+        "isPartOf": {"@id": SITE["url"] + "#website"},
+        "publisher": {"@id": ORG_ID},
+    }
+    _mod = modified_date(page)
+    if _mod:
+        webpage["dateModified"] = _mod
+    graph.append(webpage)
+
     if layout == "post":
         graph.append({
             "@type": "BlogPosting",
@@ -312,7 +380,7 @@ def make_jsonld(page):
             "headline": page["h1"],
             "description": page["description"],
             "datePublished": page["date"],
-            "dateModified": page.get("updated") or page["date"],
+            "dateModified": modified_date(page) or page["date"],
             "articleSection": page["category_name"],
             "inLanguage": "zh-TW",
             "wordCount": page.get("word_count", 0),
@@ -385,6 +453,7 @@ def load_all(folder, default_layout):
         meta.setdefault("layout", default_layout)
         meta.setdefault("slug", f.stem)
         meta["_body"] = body
+        meta["_src"] = f
         docs.append(meta)
     return docs
 
@@ -592,7 +661,50 @@ def main():
 
     # ---- robots.txt ----
     (DIST / "robots.txt").write_text(
-        f"User-agent: *\nAllow: /\n\nSitemap: {SITE['url']}sitemap.xml\n", encoding="utf-8")
+        f"User-agent: *\nAllow: /\n\nSitemap: {SITE['url']}sitemap.xml\n"
+        f"\n# 給 AI 回答引擎的網站導覽\n# {SITE['url']}llms.txt\n", encoding="utf-8")
+
+    # ---- llms.txt ----
+    # 給 ChatGPT、Perplexity、Claude 等 AI 回答引擎看的網站導覽（llmstxt.org 慣例）。
+    # 由建置腳本自動產生，排程文章上線時會跟著更新，不會過時。
+    def _li(title, url, desc):
+        desc = re.sub(r"\s+", " ", (desc or "")).strip()
+        return f"- [{title}]({SITE['url']}{url}): {desc}"
+
+    L = [f"# {SITE['org']}", "",
+         f"> {SITE['name']}提供 Meta 與 Google 廣告代操、廣告素材製作，"
+         f"以及企業 AI 導入與流程自動化。服務電商、房地產、醫療診所、直銷保健等 "
+         f"8＋ 產業，採固定月費、不抽廣告費趴數。位於{SITE['address']}。", "",
+         "本站所有實績數據皆為真實廣告後台成果。基於對客戶的保密義務不公開後台截圖，",
+         "但案例頁完整記載產業背景、操作邏輯與成效數字。", "",
+         "## 服務項目", ""]
+    for s in SITE["services"]:
+        L.append(_li(s["title"], s["href"], s["desc"]))
+
+    L += ["", "## 產業經驗", ""]
+    for i in SITE["industries"]:
+        L.append(_li(i["title"], i["href"], i["desc"]))
+
+    L += ["", "## 實績案例（真實廣告後台數據）", ""]
+    for c in cases:
+        L.append(_li(c["h1"], c["url"], c["summary"]))
+
+    L += ["", "## 服務方案", "",
+          _li("服務方案與費用", "pricing/",
+              "入門 15,000／標準 25,000／旗艦 35,000 元月費，廣告費另計且不抽成。"
+              "含完整方案比較與「費用不包含什麼」說明。"), ""]
+
+    if posts:
+        L += ["## 行銷文章", ""]
+        for p in posts:
+            L.append(_li(p["h1"], p["url"], f"{p['date']}｜{excerpt(p, p['_body'], 70)}"))
+
+    L += ["", "## 其他", "",
+          _li("關於騰域", "about/", "公司介紹、服務理念與公司資訊。"),
+          _li("免費諮詢", "contact/", "諮詢表單，24 小時內回覆。"),
+          _li("隱私權政策", "privacy/", "個資處理方式與第三方追蹤工具說明。"), ""]
+
+    (DIST / "llms.txt").write_text("\n".join(L), encoding="utf-8")
 
     # ---- sitemap.xml ----
     lines = ['<?xml version="1.0" encoding="UTF-8"?>',
