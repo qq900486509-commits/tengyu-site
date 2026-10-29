@@ -30,23 +30,32 @@
         </label>
       </div>
       <div class="form-row">
+        {#- 電話必填：實際收到的諮詢幾乎都是留電話。Email 選填，方便後續寄提案。 #}
         <label>
-          <span>聯絡方式 <em>*</em></span>
-          <input name="contact" required placeholder="Email 或電話" autocomplete="email">
+          <span>聯絡電話 <em>*</em></span>
+          <input name="phone" type="tel" inputmode="tel" required
+                 placeholder="例如 0912-345-678" autocomplete="tel">
         </label>
+        <label>
+          <span>Email</span>
+          <input name="email" type="email"
+                 placeholder="選填，方便寄送提案" autocomplete="email">
+        </label>
+      </div>
+      <div class="form-row">
         <label>
           <span>產業別</span>
           <select name="industry">
             {%- for i in site.form_industries %}<option value="{{ i }}">{{ i }}</option>{% endfor %}
           </select>
         </label>
+        <label>
+          <span>每月廣告預算</span>
+          <select name="budget">
+            {%- for b in site.form_budgets %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
+          </select>
+        </label>
       </div>
-      <label>
-        <span>每月廣告預算</span>
-        <select name="budget">
-          {%- for b in site.form_budgets %}<option value="{{ b }}">{{ b }}</option>{% endfor %}
-        </select>
-      </label>
       <label>
         <span>想達成的目標</span>
         <textarea name="goal" rows="4" placeholder="簡單描述你的產品、目前狀況與想達成的目標"></textarea>
