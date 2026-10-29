@@ -30,16 +30,16 @@
         </label>
       </div>
       <div class="form-row">
-        {#- 電話必填：實際收到的諮詢幾乎都是留電話。Email 選填，方便後續寄提案。 #}
+        {#- Email 必填（寄送提案用），電話選填。 #}
         <label>
-          <span>聯絡電話 <em>*</em></span>
-          <input name="phone" type="tel" inputmode="tel" required
-                 placeholder="例如 0912-345-678" autocomplete="tel">
+          <span>Email <em>*</em></span>
+          <input name="email" type="email" required
+                 placeholder="example@mail.com" autocomplete="email">
         </label>
         <label>
-          <span>Email</span>
-          <input name="email" type="email"
-                 placeholder="選填，方便寄送提案" autocomplete="email">
+          <span>聯絡電話</span>
+          <input name="phone" type="tel" inputmode="tel"
+                 placeholder="選填，方便直接聯繫" autocomplete="tel">
         </label>
       </div>
       <div class="form-row">
