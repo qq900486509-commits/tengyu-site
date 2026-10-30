@@ -69,8 +69,9 @@ Facebook 與 Instagram 的投放。適合需要「創造需求」的產品——
 
 ## 與行銷公司的合作
 
-騰域除了直接服務品牌客戶外，也有長期與行銷公司合作經驗：您負責品牌整體規劃及公司運營項目，騰域負責承接廣告投放、受眾規劃與成效優化。
+騰域除了直接服務品牌客戶外，也有長期與行銷公司合作經驗。
 
-同樣的合作方式，歡迎行銷同業洽談。
+歡迎行銷同業洽談。
 
+<p class="partner-label">戰略合作伙伴：</p>
 <p class="partner-logo"><img src="{{root}}partner-highsoon.png" alt="海森智能行銷顧問股份有限公司 HIGH-SOON AI MARKETING Co., Ltd." width="800" height="169" loading="lazy"></p>

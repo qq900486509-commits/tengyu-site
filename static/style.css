@@ -360,8 +360,12 @@ h2:first-child,h3:first-child,h4:first-child{margin-top:0}
 }
 
 /* ── 合作夥伴 logo ───────────────────────────── */
+.partner-label{
+  margin:28px 0 10px;
+  color:var(--muted);
+}
 .partner-logo{
-  margin:28px 0 0;
+  margin:0;
 }
 .partner-logo img{
   display:block;
