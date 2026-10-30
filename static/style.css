@@ -370,6 +370,6 @@ h2:first-child,h3:first-child,h4:first-child{margin-top:0}
 .partner-logo img{
   display:block;
   width:auto;
-  max-width:min(100%,340px);
+  max-width:min(100%,260px);
   height:auto;
 }

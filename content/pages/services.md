@@ -73,5 +73,5 @@ Facebook 與 Instagram 的投放。適合需要「創造需求」的產品——
 
 歡迎行銷同業洽談。
 
-<p class="partner-label">戰略合作伙伴：</p>
+<p class="partner-label">戰略合作夥伴：</p>
 <p class="partner-logo"><img src="{{root}}partner-highsoon.png" alt="海森智能行銷顧問股份有限公司 HIGH-SOON AI MARKETING Co., Ltd." width="800" height="169" loading="lazy"></p>
